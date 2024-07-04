@@ -1,71 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:priority/features/alert/data/alert_model.dart';
+import 'package:priority/features/alert/presentation/ui/widgets/alert_notification_widget.dart';
 
 const kAlertHeight = 80.0;
 
-enum AlertPriority {
-  error(2),
-  warning(1),
-  info(0);
 
-  const AlertPriority(this.value);
-  final int value;
-}
 
-class Alert extends StatelessWidget {
-  const Alert({
-    super.key,
-    required this.backgroundColor,
-    required this.child,
-    required this.leading,
-    required this.priority,
-  });
 
-  final Color backgroundColor;
-  final Widget child;
-  final Widget leading;
-  final AlertPriority priority;
-
-  @override
-  Widget build(BuildContext context) {
-    final statusbarHeight = MediaQuery.of(context).padding.top;
-    return Material(
-      child: Ink(
-        color: backgroundColor,
-        height: kAlertHeight + statusbarHeight,
-        child: Column(
-          children: [
-            SizedBox(height: statusbarHeight),
-            Expanded(
-              child: Row(
-                children: [
-                  const SizedBox(width: 28.0),
-                  IconTheme(
-                    data: const IconThemeData(
-                      color: Colors.white,
-                      size: 36,
-                    ),
-                    child: leading,
-                  ),
-                  const SizedBox(width: 16.0),
-                  Expanded(
-                    child: DefaultTextStyle(
-                      style: const TextStyle(color: Colors.white),
-                      child: child,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 28.0),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class AlertMessenger extends StatefulWidget {
-  const AlertMessenger({
+class AlertScope extends StatefulWidget {
+  const AlertScope({
     super.key,
     required this.child,
   });
@@ -73,9 +16,9 @@ class AlertMessenger extends StatefulWidget {
   final Widget child;
 
   @override
-  State<AlertMessenger> createState() => AlertMessengerState();
+  State<AlertScope> createState() => AlertScopeState();
 
-  static AlertMessengerState of(BuildContext context) {
+  static AlertScopeState of(BuildContext context) {
     try {
       final scope = _AlertMessengerScope.of(context);
       return scope.state;
@@ -84,18 +27,18 @@ class AlertMessenger extends StatefulWidget {
         [
           ErrorSummary('No AlertMessenger was found in the Element tree'),
           ErrorDescription('AlertMessenger is required in order to show and hide alerts.'),
-          ...context.describeMissingAncestor(expectedAncestorType: AlertMessenger),
+          ...context.describeMissingAncestor(expectedAncestorType: AlertScope),
         ],
       );
     }
   }
 }
 
-class AlertMessengerState extends State<AlertMessenger> with TickerProviderStateMixin {
+class AlertScopeState extends State<AlertScope> with TickerProviderStateMixin {
   late final AnimationController controller;
   late final Animation<double> animation;
 
-  Widget? alertWidget;
+  AlertNotificationWidget? alertWidget;
 
   @override
   void initState() {
@@ -122,8 +65,9 @@ class AlertMessengerState extends State<AlertMessenger> with TickerProviderState
     super.dispose();
   }
 
-  void showAlert({required Alert alert}) {
-    setState(() => alertWidget = alert);
+  void showAlert({required AlertModel alert}) {
+    AlertNotificationWidget alertNotification = AlertNotificationWidget(alert: alert);
+    setState(() => alertWidget = alertNotification);
     controller.forward();
   }
 
@@ -168,7 +112,7 @@ class _AlertMessengerScope extends InheritedWidget {
     required super.child,
   });
 
-  final AlertMessengerState state;
+  final AlertScopeState state;
 
   @override
   bool updateShouldNotify(_AlertMessengerScope oldWidget) => state != oldWidget.state;
