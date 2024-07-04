@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:priority/config/alert_scope.dart';
+import 'package:priority/features/alert/presentation/ui/widgets/alert_button.dart';
+import 'package:priority/features/alert/presentation/ui/widgets/hide_alert_button.dart';
 
 import '../../../data/alert_model.dart';
 import '../../../data/alert_priority.dart';
 
-class AlertMessenger extends StatelessWidget {
+class AlertMessenger extends StatefulWidget {
   const AlertMessenger({super.key});
 
   @override
+  State<AlertMessenger> createState() => _AlertMessengerState();
+}
+
+class _AlertMessengerState extends State<AlertMessenger> {
+  @override
   Widget build(BuildContext context) {
+    // AlertProvider alertProvider = context.read<AlertProvider>();
+    // print(alertProvider.state.status);
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
@@ -22,7 +31,8 @@ class AlertMessenger extends StatelessWidget {
               flex: 3,
               child: Center(
                 child: Text(
-                  '<Adicione o texto do alerta de prioridade aqui>',
+                  AlertScope.of(context).homeText,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.grey[500],
                     fontSize: 16.0,
@@ -39,90 +49,19 @@ class AlertMessenger extends StatelessWidget {
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            AlertScope.of(context).showAlert(
-                              alert: const AlertModel(
-                                backgroundColor: Colors.red,
-                                leading: Icon(Icons.error),
-                                priority: AlertPriority.error,
-                                child: Text('Oops, ocorreu um erro. Pedimos desculpas.'),
-                              ),
-                            );
-                          },
-                          style: const ButtonStyle(
-                            backgroundColor: MaterialStatePropertyAll(Colors.red),
-                          ),
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Icon(Icons.error),
-                              SizedBox(width: 4.0),
-                              Text('Error'),
-                            ],
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            AlertScope.of(context).showAlert(
-                              alert: const AlertModel(
-                                backgroundColor: Colors.amber,
-                                leading: Icon(Icons.warning),
-                                priority: AlertPriority.warning,
-                                child: Text('Atenção! Você foi avisado.'),
-                              ),
-                            );
-                          },
-                          style: const ButtonStyle(
-                            backgroundColor: MaterialStatePropertyAll(Colors.amber),
-                          ),
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Icon(Icons.warning_outlined),
-                              SizedBox(width: 4.0),
-                              Text('Warning'),
-                            ],
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            AlertScope.of(context).showAlert(
-                              alert: const AlertModel(
-                                backgroundColor: Colors.green,
-                                leading: Icon(Icons.info),
-                                priority: AlertPriority.info,
-                                child: Text('Este é um aplicativo escrito em Flutter.'),
-                              ),
-                            );
-                          },
-                          style: const ButtonStyle(
-                            backgroundColor: MaterialStatePropertyAll(Colors.lightGreen),
-                          ),
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Icon(Icons.info_outline),
-                              SizedBox(width: 4.0),
-                              Text('Info'),
-                            ],
-                          ),
-                        ),
-                      ],
+                      children: AlertPriority.values.map((e) {
+                        AlertModel alert = AlertModel.build(priority: e);
+                        return AlertButton(
+                          alert: alert,
+                        );
+                      }).toList(),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
+                    const Padding(
+                      padding: EdgeInsets.symmetric(
                         horizontal: 24.0,
                         vertical: 16.0,
                       ),
-                      child: ElevatedButton(
-                        onPressed: AlertScope.of(context).hideAlert,
-                        child: const Text('Hide alert'),
-                      ),
+                      child: HideAlertButton(),
                     ),
                   ],
                 ),

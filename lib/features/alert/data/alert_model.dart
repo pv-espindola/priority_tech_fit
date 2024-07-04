@@ -4,36 +4,36 @@ import 'alert_priority.dart';
 
 class AlertModel {
   final Color backgroundColor;
-  final Widget child;
-  final Widget leading;
+  final String text;
+  final IconData leading;
   final AlertPriority priority;
 
   const AlertModel({
     required this.backgroundColor,
-    required this.child,
+    required this.text,
     required this.leading,
     required this.priority,
   });
 
   factory AlertModel._warning() => const AlertModel(
         backgroundColor: Colors.amber,
-        leading: Icon(Icons.warning),
+        leading: Icons.warning,
         priority: AlertPriority.warning,
-        child: Text('Atenção! Você foi avisado.'),
+        text: 'Atenção! Você foi avisado.',
       );
 
   factory AlertModel._info() => const AlertModel(
         backgroundColor: Colors.green,
-        leading: Icon(Icons.info),
+        leading: Icons.info,
         priority: AlertPriority.info,
-        child: Text('Este é um aplicativo escrito em Flutter.'),
+        text: 'Este é um aplicativo escrito em Flutter.',
       );
 
   factory AlertModel._error() => const AlertModel(
         backgroundColor: Colors.red,
-        leading: Icon(Icons.error),
+        leading: Icons.error,
         priority: AlertPriority.error,
-        child: Text('Oops, ocorreu um erro. Pedimos desculpas.'),
+        text: 'Oops, ocorreu um erro. Pedimos desculpas.',
       );
 
   factory AlertModel.build({required AlertPriority priority}) {

@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:priority/config/alert_scope.dart';
 import 'package:priority/features/alert/data/alert_model.dart';
 import 'package:priority/features/alert/data/alert_priority.dart';
 
-class AlertButton extends StatelessWidget {
-  final Function() onPressed;
+class AlertButton extends StatefulWidget {
   final AlertModel alert;
-  late final ButtonComposition composition;
 
-  AlertButton({required this.alert, required this.onPressed, super.key}) {
-    compose();
+  AlertButton({required this.alert, super.key}) {
   }
 
+  @override
+  State<AlertButton> createState() => _AlertButtonState();
+}
+
+class _AlertButtonState extends State<AlertButton> {
+  late final ButtonComposition composition;
   void compose() {
-    switch (alert.priority) {
+    switch (widget.alert.priority) {
       case AlertPriority.error:
         composition = ButtonComposition(icon: Icons.error, text: 'Error');
       case AlertPriority.warning:
@@ -23,11 +27,18 @@ class AlertButton extends StatelessWidget {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    compose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: onPressed,
+      onPressed: ()=> AlertScope.of(context).showAlert(alert: widget.alert),
       style: ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll(alert.backgroundColor),
+        backgroundColor: MaterialStatePropertyAll(widget.alert.backgroundColor),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.max,

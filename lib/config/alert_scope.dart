@@ -4,9 +4,6 @@ import 'package:priority/features/alert/presentation/ui/widgets/alert_notificati
 
 const kAlertHeight = 80.0;
 
-
-
-
 class AlertScope extends StatefulWidget {
   const AlertScope({
     super.key,
@@ -26,7 +23,8 @@ class AlertScope extends StatefulWidget {
       throw FlutterError.fromParts(
         [
           ErrorSummary('No AlertMessenger was found in the Element tree'),
-          ErrorDescription('AlertMessenger is required in order to show and hide alerts.'),
+          ErrorDescription(
+              'AlertMessenger is required in order to show and hide alerts.'),
           ...context.describeMissingAncestor(expectedAncestorType: AlertScope),
         ],
       );
@@ -39,6 +37,7 @@ class AlertScopeState extends State<AlertScope> with TickerProviderStateMixin {
   late final Animation<double> animation;
 
   AlertNotificationWidget? alertWidget;
+  String homeText = '';
 
   @override
   void initState() {
@@ -66,14 +65,34 @@ class AlertScopeState extends State<AlertScope> with TickerProviderStateMixin {
   }
 
   void showAlert({required AlertModel alert}) {
-    AlertNotificationWidget alertNotification = AlertNotificationWidget(alert: alert);
-    setState(() => alertWidget = alertNotification);
-    controller.forward();
+    if (alertWidget == null ||
+        alertWidget != null &&
+            alert.priority.value > alertWidget!.alert.priority.value) {
+      AlertNotificationWidget alertNotification =
+          AlertNotificationWidget(alert: alert);
+      setState(() {
+        alertWidget = alertNotification;
+        homeText = textAlertScope;
+      });
+      controller.forward();
+    }
   }
 
   void hideAlert() {
+    alertWidget = null;
+    homeText = '';
     controller.reverse();
   }
+
+  String get textAlertScope {
+    if (alertWidget != null) {
+      return '${alertWidget!.alert.text}'
+          '\n Prioridade: ${alertWidget!.alert.priority.value}';
+    }
+    return '';
+  }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +109,7 @@ class AlertScopeState extends State<AlertScope> with TickerProviderStateMixin {
               top: position <= statusbarHeight ? 0 : position - statusbarHeight,
               child: _AlertMessengerScope(
                 state: this,
+                message: textAlertScope,
                 child: widget.child,
               ),
             ),
@@ -109,13 +129,16 @@ class AlertScopeState extends State<AlertScope> with TickerProviderStateMixin {
 class _AlertMessengerScope extends InheritedWidget {
   const _AlertMessengerScope({
     required this.state,
+    required this.message,
     required super.child,
   });
 
   final AlertScopeState state;
+  final String message;
 
   @override
-  bool updateShouldNotify(_AlertMessengerScope oldWidget) => state != oldWidget.state;
+  bool updateShouldNotify(_AlertMessengerScope oldWidget) =>
+      state != oldWidget.state || message != oldWidget.message;
 
   static _AlertMessengerScope? maybeOf(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<_AlertMessengerScope>();

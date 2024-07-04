@@ -31,13 +31,13 @@ class AlertNotificationWidget extends StatelessWidget {
                       color: Colors.white,
                       size: 36,
                     ),
-                    child: alert.leading,
+                    child: Icon(alert.leading),
                   ),
                   const SizedBox(width: 16.0),
                   Expanded(
                     child: DefaultTextStyle(
                       style: const TextStyle(color: Colors.white),
-                      child: alert.child,
+                      child: Text(alert.text),
                     ),
                   ),
                 ],
