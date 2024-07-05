@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:priority/features/alert/data/alert_model.dart';
+import 'package:priority/features/alert/data/alert_priority.dart';
 import 'package:priority/features/alert/presentation/ui/widgets/alert_notification_widget.dart';
 
 const kAlertHeight = 80.0;
@@ -119,6 +121,16 @@ class AlertScopeState extends State<AlertScope> with TickerProviderStateMixin {
               right: 0,
               child: alertWidget ?? const SizedBox.shrink(),
             ),
+            //AlertPriority.values.map((e) => null).toList()
+            GestureDetector(
+              onTap: ()=> controller.reverse(),
+              onDoubleTap: ()=> controller.forward(),
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 400),
+              child: FlutterLogo(size: 75,),
+              ),
+            )
+            
           ],
         );
       },
